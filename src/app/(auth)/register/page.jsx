@@ -59,49 +59,19 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-1">
               <Label htmlFor="nm_lengkap">Nama Lengkap</Label>
-              <Input
-                id="nm_lengkap"
-                name="nm_lengkap"
-                value={form.nm_lengkap}
-                onChange={handleChange}
-                required
-                placeholder="Nama lengkap"
-              />
+              <Input id="nm_lengkap" name="nm_lengkap" value={form.nm_lengkap} onChange={handleChange} required placeholder="Nama lengkap" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                placeholder="you@example.com"
-              />
+              <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="you@example.com" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-                required
-                placeholder="Username unik"
-              />
+              <Input id="username" name="username" value={form.username} onChange={handleChange} required placeholder="Username unik" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-                placeholder="••••••••"
-              />
+              <Input id="password" name="password" type="password" value={form.password} onChange={handleChange} required placeholder="••••••••" />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>

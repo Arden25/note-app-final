@@ -1,8 +1,7 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,14 +22,92 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-10 justify-center items-center border-2">
-      <div className="flex flex-col items-center gap-8 mt-20">
-        <h1 className="text-center text-6xl font-bold text-blue-600">Welcome to NotesApp</h1>
-        <p className="text-slate-800 text-center text-lg italic">A simple and powerful note-taking app for your everyday thoughts.</p>
-        <Button variant="outline" size="lg" className="text-lg border-blue-200 text-blue-800 hover:text-blue-800 hover:bg-blue-50">
-          Buat Catatan Baru
-        </Button>
+    <div className="min-h-screen bg-secondary flex flex-col justify-center items-center p-6">
+      {/* Container utama */}
+      <div className="text-center p-8 max-w-4xl bg-secondary rounded-2xl opacity-0 translate-y-6 animate-fadeIn" style={{ animationDelay: "0s" }}>
+        <h1 className="text-5xl md:text-6xl font-extrabold text-teal-700 mb-6 opacity-0 translate-y-6 animate-fadeIn" style={{ animationDelay: "0.2s" }}>
+          Welcome to NotesApp
+        </h1>
+        <p className="text-lg md:text-xl text-teal-700 mb-6 max-w-xl mx-auto opacity-0 translate-y-6 animate-fadeIn" style={{ animationDelay: "0.4s" }}>
+          A simple and powerful note-taking app for your everyday thoughts.
+        </p>
+        <Link href={isLoggedIn ? "/notes/create" : "/login"}>
+          <p
+            className="relative z-10 inline-block px-8 py-3 mb-4 bg-white text-teal-700 rounded-lg text-lg font-semibold shadow hover:bg-teal-700/10 transition duration-300 translate-y-6 animate-fadeIn opacity-0"
+            style={{ animationDelay: "0.6s" }}
+          >
+            Create a New Note
+          </p>
+        </Link>
       </div>
+
+      {/* Features */}
+      <div className="mt-20 max-w-7xl w-full px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-teal-700 mb-10 text-center opacity-0 translate-y-6 animate-fadeIn" style={{ animationDelay: "0.8s" }}>
+          Features
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {[
+            {
+              title: "Take Notes",
+              link: "notes/create",
+              description: "Create and organize your notes with ease. Add title and content to each note.",
+              icon: (
+                <svg className="w-10 h-10 text-teal-700 mb-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9M12 4h9M12 12h9M3 6h.01M3 18h.01M3 12h.01" />
+                </svg>
+              ),
+            },
+            {
+              title: "riview",
+              link: "/riview",
+              description: "Browse all your notes and find them easily whenever you need.",
+              icon: (
+                <svg className="w-10 h-10 text-teal-700 mb-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276a2 2 0 011.447 3.666l-4.553 2.275a2 2 0 01-1.447-3.665zM3 19v-4a4 4 0 014-4h12" />
+                </svg>
+              ),
+            },
+            {
+              title: "Edit Notes",
+              link: "/",
+              description: "Update and modify your notes whenever needed with just a few clicks.",
+              icon: (
+                <svg className="w-10 h-10 text-teal-700 mb-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5h6M7 8h10M7 12h10M7 16h10M7 20h10" />
+                </svg>
+              ),
+            },
+          ].map(({ title, description, icon, link }, i) => (
+            <Link href={link}>
+              <div key={title} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 opacity-0 translate-y-6 animate-fadeIn" style={{ animationDelay: `${1 + i * 0.2}s` }}>
+                {icon}
+                <h3 className="text-xl font-semibold text-teal-700 mb-2">{title}</h3>
+                <p className="text-teal-700">{description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(15px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation-name: fadeIn;
+          animation-duration: 0.6s;
+          animation-fill-mode: forwards;
+          animation-timing-function: ease-out;
+        }
+      `}</style>
     </div>
   );
 }

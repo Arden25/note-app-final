@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import jwt from "jsonwebtoken";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 export default function CreateNotePage() {
   const [title, setTitle] = useState("");
@@ -58,7 +63,7 @@ export default function CreateNotePage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           id_user: user,
@@ -89,7 +94,32 @@ export default function CreateNotePage() {
 
   return (
     <div className="mt-20">
-      Silahkan Buat Tampilan untuk form menambahkan catatan
+      <Card className="w-[400px] mx-auto p-6 space-y-4">
+        <h1 className="text-3xl text-center font-bold">Buat Catatan Baru</h1>
+
+        <div>
+          <Label htmlFor="title" className="ml-2 block text-lg font-medium mb-1">
+            Judul
+          </Label>
+          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        </div>
+
+        <div>
+          <label htmlFor="content" className="block font-medium mb-1">
+            Isi
+          </label>
+          <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={6} />
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" onClick={() => router.back()}>
+            Batal
+          </Button>
+          <Button onClick={handleCreate} disabled={loading}>
+            {loading ? "Menyimpan..." : "Simpan"}
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }

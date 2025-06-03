@@ -7,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Loader } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
@@ -47,6 +46,7 @@ export default function EditNotePage({ params }) {
         toast({
           title: "Gagal mengambil catatan",
           description: "Pastikan catatan tersedia.",
+          variant: "destructive",
         });
       }
     };
@@ -91,6 +91,7 @@ export default function EditNotePage({ params }) {
       router.push("/notes");
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Gagal menyimpan",
         description: "Terjadi kesalahan saat memperbarui catatan.",
       });
@@ -99,10 +100,38 @@ export default function EditNotePage({ params }) {
     }
   };
 
+  if (!note) {
+    return <div className="mt-20 text-center">Loading catatan...</div>;
+  }
 
   return (
     <div className="mt-20">
-      Silahkan buat form untuk mengedit catatan
+      <Card className="w-[400px] mx-auto p-6 space-y-4">
+        <h1 className="text-3xl text-center font-bold">Edit Catatan</h1>
+
+        <div>
+          <Label htmlFor="title" className="ml-2 block text-lg font-medium mb-1">
+            Judul
+          </Label>
+          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Masukkan judul" />
+        </div>
+
+        <div>
+          <Label htmlFor="content" className="ml-2 block text-lg font-medium mb-1">
+            Isi
+          </Label>
+          <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={6} placeholder="Masukkan isi catatan" />
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" onClick={() => router.back()} disabled={loading}>
+            Batal
+          </Button>
+          <Button onClick={handleUpdate} disabled={loading}>
+            {loading ? "Menyimpan..." : "Simpan"}
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }
