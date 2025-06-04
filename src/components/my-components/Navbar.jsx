@@ -1,5 +1,5 @@
 "use client";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Home, Info, FileText, Plus, LogOut, LogIn, UserPlus, BookOpen } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -15,6 +16,7 @@ export default function Navbar() {
   const closeSidebar = () => setIsOpen(false);
 
   useEffect(() => {
+    setMounted(true);
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
@@ -34,151 +36,263 @@ export default function Navbar() {
     return regex.test(pathname);
   };
 
+  if (!mounted) {
+    return null; // Prevent hydration mismatch
+  }
+
   return (
-    <div className="w-full sticky top-0 z-50 shadow-md bg-background">
-      <nav className="bg-white-100 px-6 py-5 md:py-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-teal-700 font-extrabold text-2xl md:text-3xl select-none cursor-default">Notes App</div>
+    <>
+      {/* Custom CSS untuk animasi */}
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out forwards;
+        }
 
-          {/* Hamburger untuk mobile */}
-          <div className="flex items-center space-x-4 md:hidden">
-            <button aria-label="Toggle menu" onClick={toggleSidebar} className="p-2 rounded-md hover:bg-primary-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary-foreground/50">
-              <Menu className="text-primary-foreground" size={24} />
-            </button>
-          </div>
+        @keyframes shimmer {
+          0% {
+            background-position: -200% center;
+          }
+          100% {
+            background-position: 200% center;
+          }
+        }
+        .animate-shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s infinite;
+        }
 
-          {/* Menu desktop */}
-          <div className="hidden md:flex space-x-6 items-center">
-            <Link
-              href="/"
-              className={`relative px-3 py-2 rounded-md font-medium transition-colors
-                  ${isActive("/") ? "bg-teal-700 text-white" : "text-black/70 hover:bg-gray-300"}`}
-            >
-              Home
-              {isActive("/") && <span className="absolute -bottom-1 left-0 right-0 h-1 bg-secondary rounded-t-md" />}
-            </Link>
-            <Link
-              href="/about"
-              className={`relative px-3 py-2 rounded-md font-medium transition-colors
-                  ${isActive("/about") ? "bg-teal-700 text-white" : "text-black/70 hover:bg-gray-300"}`}
-            >
-              About Us
-              {isActive("/about") && <span className="absolute -bottom-1 left-0 right-0 h-1 bg-secondary rounded-t-md" />}
-            </Link>
-            <Link
-              href="/notes"
-              className={`relative px-3 py-2 rounded-md font-medium transition-colors
-                  ${isActive("/notes") ? "bg-teal-700 text-white" : "text-black/70 hover:bg-gray-300"}`}
-            >
-              List Notes
-              {isActive("/notes") && <span className="absolute -bottom-1 left-0 right-0 h-1 bg-secondary rounded-t-md" />}
-            </Link>
-            {isLoggedIn && (
-              <Link
-                href="/notes/create"
-                className={`relative px-3 py-2 rounded-md font-medium transition-colors
-                  ${isActive("/notes/create") ? "bg-teal-700 text-white" : "text-black/70 hover:bg-gray-300"}`}
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .nav-blur {
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+        }
+      `}</style>
+
+      <div className="w-full sticky top-0 z-50 nav-blur border-b border-white/10">
+        {/* Background gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-600/95 via-blue-600/95 to-teal-600/95"></div>
+
+        <nav className="relative px-6 py-4">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            {/* Logo/Brand */}
+            <div className="flex items-center gap-3 animate-fadeIn">
+              <div className="p-2 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20">
+                <BookOpen className="text-white" size={24} />
+              </div>
+              <div className="text-white font-extrabold text-2xl md:text-3xl tracking-tight">
+                Notes<span className="text-teal-200">App</span>
+              </div>
+            </div>
+
+            {/* Hamburger untuk mobile */}
+            <div className="flex items-center space-x-4 md:hidden">
+              <button
+                aria-label="Toggle menu"
+                onClick={toggleSidebar}
+                className="p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300"
               >
-                Create Notes
-                {isActive("/notes/create") && <span className="absolute -bottom-1 left-0 right-0 h-1 bg-secondary rounded-t-md" />}
-              </Link>
-            )}
-            {isLoggedIn ? (
-              <Button size="sm" onClick={handleLogout} className="text-white bg-destructive hover:bg-destructive/90 transition">
-                Logout
-              </Button>
-            ) : (
-              <>
-                <Link href="/login" passHref>
-                  <Button size="sm" className="text-white bg-teal-700 hover:bg-teal-700/70 transition">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/register" passHref>
-                  <Button size="sm" className="border-2 border-teal-700 text-teal-700 bg-white hover:bg-gray-100 transition">
-                    Register
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+                <Menu className="text-white" size={24} />
+              </button>
+            </div>
 
-      {/* Overlay & Drawer untuk mobile - selalu render untuk animasi */}
+            {/* Menu desktop */}
+            <div className="hidden md:flex space-x-2 items-center animate-fadeIn">
+              <Link
+                href="/"
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2
+                  ${isActive("/") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+              >
+                <Home size={18} />
+                Home
+                {isActive("/") && <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full opacity-60" />}
+              </Link>
+
+              <Link
+                href="/about"
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2
+                  ${isActive("/about") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+              >
+                <Info size={18} />
+                About Us
+                {isActive("/about") && <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full opacity-60" />}
+              </Link>
+
+              <Link
+                href="/notes"
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2
+                  ${isActive("/notes") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+              >
+                <FileText size={18} />
+                List Notes
+                {isActive("/notes") && <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full opacity-60" />}
+              </Link>
+
+              {isLoggedIn && (
+                <Link
+                  href="/notes/create"
+                  className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2
+                    ${isActive("/notes/create") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+                >
+                  <Plus size={18} />
+                  Create Notes
+                  {isActive("/notes/create") && <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full opacity-60" />}
+                </Link>
+              )}
+
+              <div className="w-px h-6 bg-white/20 mx-2"></div>
+
+              {isLoggedIn ? (
+                <Button size="sm" onClick={handleLogout} className="bg-red-500/90 hover:bg-red-600 text-white border border-red-400/30 backdrop-blur-sm transition-all duration-300 hover:scale-105 shadow-lg flex items-center gap-2">
+                  <LogOut size={16} />
+                  Logout
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Link href="/login" passHref>
+                    <Button size="sm" className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 hover:scale-105 shadow-lg flex items-center gap-2">
+                      <LogIn size={16} />
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register" passHref>
+                    <Button size="sm" className="bg-white text-teal-600 hover:bg-gray-100 border border-white/50 transition-all duration-300 hover:scale-105 shadow-lg flex items-center gap-2 font-semibold">
+                      <UserPlus size={16} />
+                      Register
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
       <div
         className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-in-out
-          ${isOpen ? "visible bg-background/80 dark:bg-background/90 opacity-100" : "invisible opacity-0"}`}
+          ${isOpen ? "visible bg-black/50 backdrop-blur-sm opacity-100" : "invisible opacity-0"}`}
         onClick={closeSidebar}
       >
+        {/* Mobile Sidebar */}
         <div
-          className={`w-64 bg-primary p-6 space-y-6 transform transition-transform duration-300 ease-in-out h-full shadow-lg
+          className={`w-80 bg-gradient-to-br from-teal-600 to-blue-600 p-6 space-y-6 transform transition-all duration-300 ease-in-out h-full shadow-2xl border-r border-white/10
             ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between">
-            <div className="text-primary-foreground font-extrabold text-2xl select-none cursor-default">Notes App</div>
-            <button aria-label="Close menu" onClick={closeSidebar} className="p-1 rounded-md hover:bg-primary-foreground/20 focus:outline-none focus:ring-2 focus:ring-primary-foreground/50">
-              <X className="text-primary-foreground" size={24} />
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between animate-slideDown">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20">
+                <BookOpen className="text-white" size={20} />
+              </div>
+              <div className="text-white font-extrabold text-xl tracking-tight">
+                Notes<span className="text-teal-200">App</span>
+              </div>
+            </div>
+            <button
+              aria-label="Close menu"
+              onClick={closeSidebar}
+              className="p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300"
+            >
+              <X className="text-white" size={20} />
             </button>
           </div>
 
-          <nav className="flex flex-col space-y-3 mt-6">
+          {/* Mobile Navigation */}
+          <nav className="flex flex-col space-y-2 mt-8">
             <Link
               href="/"
               onClick={closeSidebar}
-              className={`relative px-4 py-2 rounded-md font-medium transition-colors
-                ${isActive("/") ? "bg-primary-foreground text-primary" : "text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary"}`}
+              className={`relative px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3
+                ${isActive("/") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/90 hover:bg-white/10 hover:text-white"}`}
             >
+              <Home size={20} />
               Home
-              {isActive("/") && <span className="absolute -bottom-1 left-4 right-4 h-1 bg-secondary rounded-t-md" />}
+              {isActive("/") && <div className="absolute right-4 w-2 h-2 bg-white rounded-full opacity-80" />}
             </Link>
+
             <Link
               href="/about"
               onClick={closeSidebar}
-              className={`relative px-4 py-2 rounded-md font-medium transition-colors
-                ${isActive("/about") ? "bg-primary-foreground text-primary" : "text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary"}`}
+              className={`relative px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3
+                ${isActive("/about") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/90 hover:bg-white/10 hover:text-white"}`}
             >
+              <Info size={20} />
               About Us
-              {isActive("/about") && <span className="absolute -bottom-1 left-4 right-4 h-1 bg-secondary rounded-t-md" />}
+              {isActive("/about") && <div className="absolute right-4 w-2 h-2 bg-white rounded-full opacity-80" />}
             </Link>
+
             <Link
               href="/notes"
               onClick={closeSidebar}
-              className={`relative px-4 py-2 rounded-md font-medium transition-colors
-                ${isActive("/notes") ? "bg-primary-foreground text-primary" : "text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary"}`}
+              className={`relative px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3
+                ${isActive("/notes") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/90 hover:bg-white/10 hover:text-white"}`}
             >
+              <FileText size={20} />
               List Notes
-              {isActive("/notes") && <span className="absolute -bottom-1 left-4 right-4 h-1 bg-secondary rounded-t-md" />}
+              {isActive("/notes") && <div className="absolute right-4 w-2 h-2 bg-white rounded-full opacity-80" />}
             </Link>
+
             {isLoggedIn && (
               <Link
                 href="/notes/create"
                 onClick={closeSidebar}
-                className={`relative px-4 py-2 rounded-md font-medium transition-colors
-                  ${isActive("/notes/create") ? "bg-primary-foreground text-primary" : "text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary"}`}
+                className={`relative px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3
+                  ${isActive("/notes/create") ? "bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30" : "text-white/90 hover:bg-white/10 hover:text-white"}`}
               >
+                <Plus size={20} />
                 Create Notes
-                {isActive("/notes/create") && <span className="absolute -bottom-1 left-4 right-4 h-1 bg-secondary rounded-t-md" />}
+                {isActive("/notes/create") && <div className="absolute right-4 w-2 h-2 bg-white rounded-full opacity-80" />}
               </Link>
             )}
+
+            <div className="my-4 h-px bg-white/20"></div>
+
             {isLoggedIn ? (
-              <button onClick={handleLogout} className="text-primary-foreground text-left font-medium px-4 py-2 rounded-md hover:bg-destructive hover:text-white transition">
+              <button
+                onClick={handleLogout}
+                className="text-white font-medium px-4 py-3 rounded-xl hover:bg-red-500/20 hover:text-red-100 transition-all duration-300 flex items-center gap-3 border border-transparent hover:border-red-400/30"
+              >
+                <LogOut size={20} />
                 Logout
               </button>
             ) : (
-              <>
-                <Link href="/login" onClick={closeSidebar} className="text-primary-foreground font-medium px-4 py-2 rounded-md hover:bg-secondary hover:text-primary transition">
+              <div className="space-y-2">
+                <Link href="/login" onClick={closeSidebar} className="text-white font-medium px-4 py-3 rounded-xl hover:bg-white/10 transition-all duration-300 flex items-center gap-3 border border-white/20">
+                  <LogIn size={20} />
                   Login
                 </Link>
-                <Link href="/register" onClick={closeSidebar} className="text-primary-foreground font-medium px-4 py-2 rounded-md hover:bg-secondary hover:text-primary transition">
+                <Link href="/register" onClick={closeSidebar} className="text-teal-600 bg-white font-semibold px-4 py-3 rounded-xl hover:bg-gray-100 transition-all duration-300 flex items-center gap-3 shadow-lg">
+                  <UserPlus size={20} />
                   Register
                 </Link>
-              </>
+              </div>
             )}
           </nav>
         </div>
       </div>
-    </div>
+    </>
   );
 }
