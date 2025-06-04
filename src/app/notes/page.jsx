@@ -40,11 +40,11 @@ const NotesPage = () => {
 
   return (
     <div className="container max-w-screen-lg mx-auto p-4">
-      <h1 className="mt-6 text-4xl font-bold text-center text-blue-500 mb-10">All Notes</h1>
+      <h1 className="mt-6 text-4xl font-bold text-center text-teal-700 mb-10">All Notes</h1>
 
       {loading ? (
         <div className="mt-20 flex flex-col justify-center items-center gap-4 text-center text-2xl text-gray-500">
-          <Loader size={24} className="animate-spin text-blue-700" />
+          <Loader size={24} className="animate-spin text-teal-700" />
           <p>Mengambil catatan...</p>{" "}
         </div>
       ) : (
